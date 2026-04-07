@@ -15,7 +15,7 @@ from .type import Player,Coordinate,GameResult,GameState,Direction
 from .error import InvalidMoveError,GameOverError,InvalidBoardSizeError
 from typing import Dict
     
-class Othello:
+class OthelloEngine:
     def __init__(self, size: int = 8) -> None:
         
         """Initialize a new Othello game.
@@ -192,8 +192,8 @@ class Othello:
                 self._state = GameState(result=result)
                 
                 
-    def copy(self) -> "Othello":
-        new_game = Othello(self.board.size)
+    def copy(self) -> "OthelloEngine":
+        new_game = OthelloEngine(self.board.size)
         new_game.current_player = self.current_player
         new_game._state = self._state
         

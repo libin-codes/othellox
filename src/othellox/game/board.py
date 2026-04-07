@@ -4,7 +4,7 @@ This module handles the 2D game board, cell access, and board visualization.
 It provides a clean interface for placing pieces and rendering the board state.
 """
 
-from .type import Coordinate,Cell,Player
+from .type import Coordinate,BoardCell,Player
 
 class Board:
     """Manages the Othello game board.
@@ -22,11 +22,11 @@ class Board:
             size: The side length of the square board (default: 8).
         """
         self.size = size
-        self._board: list[list[Cell]] = [[None for cell in range(self.size)] for row in range(self.size)]
+        self._board: list[list[BoardCell]] = [[None for cell in range(self.size)] for row in range(self.size)]
         
     
 
-    def __getitem__(self, coordinate: Coordinate) -> Cell:
+    def __getitem__(self, coordinate: Coordinate) -> BoardCell:
         """Get the cell value at a given coordinate.
         
         Args:
@@ -42,7 +42,7 @@ class Board:
         
         
     @property
-    def grid(self) -> list[list[Cell]]:
+    def grid(self) -> list[list[BoardCell]]:
         """Get a read-only copy of the board grid.
         
         Returns:

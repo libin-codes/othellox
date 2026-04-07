@@ -9,7 +9,7 @@ Types:
     Direction: Enumeration for eight directional movements on the board.
     GameResult: Enumeration for possible game outcomes.
     GameState: Frozen dataclass representing the current game state.
-    Cell: Type alias for board cells (Player or None).
+    BoardCell: Type alias for board Boardcells (Player or None).
 """
 
 from enum import Enum
@@ -103,7 +103,7 @@ class GameResult(Enum):
     WHITE_WINS = 1
     DRAW       = 2
 
-Cell:TypeAlias = Player | None
+BoardCell:TypeAlias = Player | None
 
 @dataclass(frozen=True)
 class GameState:
