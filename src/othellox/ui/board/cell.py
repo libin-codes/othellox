@@ -27,7 +27,7 @@ class Cell(Widget):
         content-align-horizontal: center;
         content-align-vertical: middle;
         &:hover{
-            opacity:94%;
+            opacity:80%;
         }
     
         
