@@ -6,6 +6,7 @@ from textual.widgets import Static
 from textual.reactive import reactive
 from othellox.game.type import Coordinate
 from textual.color import Color
+from rich.text import Text
 
 class CellData(Enum):
     EMPTY = ""
@@ -28,6 +29,8 @@ class Cell(Widget):
         &:hover{
             opacity:94%;
         }
+    
+        
     }
     """
     
@@ -39,6 +42,8 @@ class Cell(Widget):
     
     data = reactive(CellData.EMPTY)
     is_valid_move = reactive(False)
+    highlight  = reactive(False)
+
     
     def __init__(self,coordinate:Coordinate,background_shade:Shade,color:Color = Color.parse("green")):
         """
@@ -60,9 +65,20 @@ class Cell(Widget):
     def render(self):
         if not self.is_valid_move:
             return self.data.value
-        return "●"
+        return "[darkred]●[/]"
+    
+    
+    def watch_highlight(self,old_value,highlight):
+        if highlight:
+            self.styles.background_tint = "yellow 25%"
+            
+        else:
+            self.styles.background_tint = None
+        
+        
     
     
     def on_click(self,event:Click):
         if self.is_valid_move:
             self.app.post_message(self.Clicked(self.coordinate))
+          

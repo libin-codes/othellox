@@ -8,7 +8,7 @@ from othellox.ui.board.grid import Grid
 from othellox.ui.board.cell import Cell,CellData
 
 from othellox.game.engine import OthelloEngine
-from othellox.ui.board.board import Board
+from othellox.ui.board.game_board import GameBoard
 
 class Othello(App):
     
@@ -18,48 +18,29 @@ class Othello(App):
         
 
     def compose(self)->ComposeResult:
-        yield Board(8)
+        yield GameBoard(8)
         
     def on_mount(self):
-        self.update_cells()
-        
-        
-    def find_cell(self,coordinate:Coordinate) -> Cell:
-        cells = self.app.query(Cell)
-        for cell in cells:
-            if (cell.coordinate == coordinate):
-                return cell
-        raise 
-        
-        
-        
-    def update_cells(self):
-        board = self.game.board
-        size = self.game.board.size
-        valid_moves = self.game.available_moves
-        
-        for x in range(size):
-            for y in range(size):
-                coord = Coordinate(x,y)
-                cell_data = board[coord]
-                cell_ui = self.find_cell(coord)
-                
-                match (cell_data):
-                    case Player.WHITE:
-                        cell_ui.data = CellData.WHITE
-                    case Player.BLACK:
-                        cell_ui.data = CellData.BLACK
-                    case None:
-                        cell_ui.data = CellData.EMPTY
-                        
-                cell_ui.is_valid_move = coord in valid_moves
+        self.grid = self.query_one(Grid)
+        self.grid.sync(self.game.board)
+        self.grid.show_valid_moves(self.game.available_moves)
             
-            
+    ##################### Handlers #####################
+        
     def on_cell_clicked(self,message:Cell.Clicked):
-        self.game.move(message.coordinate)
-        self.update_cells()
+        coord = message.coordinate
+        # clear the highlighted cell and valid move hints
+        self.grid.clear_highlight()
+        self.grid.clear_valid_moves()
+        # highlight the user click
+        self.grid.highlight_cell(coord)
+        # update the engine
+        self.game.move(coord)
+        # update the grid ui and display the valid moves
+        self.grid.sync(self.game.board)
+        self.grid.show_valid_moves(self.game.available_moves)
             
-                    
+
 if __name__ == "__main__":
     app = Othello()
     app.run()

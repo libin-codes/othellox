@@ -9,7 +9,7 @@ from othellox.ui.board.grid import Grid
 from othellox.ui.board.cell import Cell,CellData
     
 
-class Board(Widget):
+class GameBoard(Widget):
     CSS_PATH = """
     Board{
         width:auto;
