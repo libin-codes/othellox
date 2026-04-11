@@ -4,6 +4,8 @@ from textual.widgets import Placeholder, Static
 from othellox.game.board import Board
 from othellox.ui.board.cell import Cell, CellData,Shade
 from othellox.game.type import Coordinate,BoardCell, Player
+from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
+from othellox.ui.board.y_coordinate_labels import YCoordinateLabels
 
 class Grid(Widget):
     
@@ -30,30 +32,6 @@ class Grid(Widget):
         width:auto;
         height:auto;
     }
-    .y-coordinates{
-        width:3;
-        height:3;
-        content-align:center middle;
-      
-    }
-    
-    .x-coordinates{
-        width:7;
-        height:1;
-        content-align:center middle;
-        color:black;
-    }
-    
-    #x-coordinate-container{
-        width:auto;
-        height:auto;
-    }
-    
-    #y-coordinate-container{
-        width:auto;
-        height:auto;
-        color:black;
-    }
     
     
     '''
@@ -65,10 +43,9 @@ class Grid(Widget):
         self.cells:dict[Coordinate,Cell] = {}
         
     def compose(self):
-            # y-coordinate
-            with Vertical(id="y-coordinate-container"):
-                for y in range(self.grid_size):
-                    yield Static(f"[bold]{y+1}[/]",classes="y-coordinates")
+          
+            yield YCoordinateLabels(self.grid_size)
+            
             # grid
             with Vertical(id="grid-container"):
                 for y in range(self.grid_size-1,-1,-1):
@@ -77,10 +54,8 @@ class Grid(Widget):
                             coordinate = Coordinate(x,y)
                             shade = Shade((x + y) % 2)
                             yield Cell(coordinate,shade)
-            # x-coordinate
-                with Horizontal(id="x-coordinate-container"):
-                    for x in range(self.grid_size):
-                        yield Static(f"[bold]{chr(ord('a') + x)}[/]",classes="x-coordinates")
+    
+                yield XCoordinateLabels(self.grid_size)
                                  
     def on_mount(self):
         self.cells = {
