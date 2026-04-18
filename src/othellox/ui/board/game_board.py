@@ -1,19 +1,37 @@
 
+from unittest.mock import DEFAULT
+
 from textual.widget import Widget
 from textual.app import App,ComposeResult
-from textual.containers import Center,Container
+from textual.containers import Center,Container, Vertical
 
 
 from othellox.game.type import Coordinate,BoardCell,Player
+from othellox.ui.board.board_header import GameBoardHeader
 from othellox.ui.board.grid import Grid
 from othellox.ui.board.cell import Cell,CellData
+from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
+from othellox.ui.board.y_coordinate_labels import YCoordinateLabels
+
     
 
 class GameBoard(Widget):
-    CSS_PATH = """
-    Board{
+    DEFAULT_CSS = """
+    GameBoard{
+        layout:horizontal;
+        background:grey;
         width:auto;
-        height:auto
+        height:auto;
+        padding-right:1;
+        
+        
+    }
+    
+    #grid-container{
+        layout:vertical;
+        width:auto;
+        height:auto;
+        background:grey;
     }
     
     """
@@ -25,6 +43,13 @@ class GameBoard(Widget):
        
     
     def compose(self)->ComposeResult:
-        yield Grid(self.grid_size)
+        
+        yield YCoordinateLabels(self.grid_size)
+            
+        # grid
+        with Vertical(id="grid-container"):
+            yield GameBoardHeader()
+            yield Grid(self.grid_size)
+            yield XCoordinateLabels(self.grid_size)
         
         

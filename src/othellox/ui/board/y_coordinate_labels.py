@@ -8,6 +8,7 @@ class YCoordinateLabels(Vertical):
         width:auto;
         height:auto;
         color:black;
+        padding-top:1;
     }
     .y-coordinates{
         width:3;

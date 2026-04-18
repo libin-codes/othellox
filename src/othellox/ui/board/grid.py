@@ -2,6 +2,7 @@ from textual.widget import Widget
 from textual.containers import Container,Center, Horizontal, Vertical
 from textual.widgets import Placeholder, Static
 from othellox.game.board import Board
+from othellox.ui.board.board_header import GameBoardHeader
 from othellox.ui.board.cell import Cell, CellData,Shade
 from othellox.game.type import Coordinate,BoardCell, Player
 from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
@@ -11,23 +12,12 @@ class Grid(Widget):
     
     DEFAULT_CSS = '''
     Grid{
-        layout:horizontal;
         width:auto;
         height:auto;
-        padding-top:1;
-        padding-right:1;
-        background:grey;
-        outline-top:thick transparent;
-        
+                
        
     }
-    #grid-container{
-        layout:vertical;
-        width:auto;
-        height:auto;
-        background:grey;
-     
-    }
+   
     .grid-rows{
         width:auto;
         height:auto;
@@ -43,19 +33,13 @@ class Grid(Widget):
         self.cells:dict[Coordinate,Cell] = {}
         
     def compose(self):
-          
-            yield YCoordinateLabels(self.grid_size)
-            
-            # grid
-            with Vertical(id="grid-container"):
-                for y in range(self.grid_size-1,-1,-1):
-                    with Horizontal(classes="grid-rows"):
-                        for x in range(self.grid_size):
-                            coordinate = Coordinate(x,y)
-                            shade = Shade((x + y) % 2)
-                            yield Cell(coordinate,shade)
-    
-                yield XCoordinateLabels(self.grid_size)
+        for y in range(self.grid_size-1,-1,-1):
+            with Horizontal(classes="grid-rows"):
+                for x in range(self.grid_size):
+                    coordinate = Coordinate(x,y)
+                    shade = Shade((x + y) % 2)
+                    yield Cell(coordinate,shade)
+
                                  
     def on_mount(self):
         self.cells = {

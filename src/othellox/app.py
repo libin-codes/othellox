@@ -4,6 +4,7 @@ from textual.containers import Center,Container
 
 
 from othellox.game.type import Coordinate,BoardCell,Player
+from othellox.ui.board.board_header import GameBoardHeader
 from othellox.ui.board.grid import Grid
 from othellox.ui.board.cell import Cell,CellData
 
@@ -22,6 +23,7 @@ class Othello(App):
         
     def on_mount(self):
         self.grid = self.query_one(Grid)
+        self.game_board_header = self.query_one(GameBoardHeader) 
         self.grid.sync(self.game.board)
         self.grid.show_valid_moves(self.game.available_moves)
             
@@ -39,6 +41,9 @@ class Othello(App):
         # update the grid ui and display the valid moves
         self.grid.sync(self.game.board)
         self.grid.show_valid_moves(self.game.available_moves)
+        # update game board header
+        score = self.game.score
+        self.game_board_header.update(score[Player.BLACK],score[Player.WHITE],self.game.current_player)
             
 
 if __name__ == "__main__":
