@@ -68,7 +68,7 @@ class OthelloEngine:
         white_score = 0
         black_score = 0
         
-        for row in self.board.grid:
+        for row in self.board.squares:
             for cell in row:
                 match cell:
                     case Player.WHITE:
@@ -83,7 +83,7 @@ class OthelloEngine:
         }
         
     @property
-    def available_moves(self) -> list[Coordinate]:
+    def legal_moves(self) -> list[Coordinate]:
         """Get all valid moves for the current player.
         
         A valid move is an empty cell where placing a piece would outflank
@@ -168,7 +168,7 @@ class OthelloEngine:
         if self._state.is_over:
             raise GameOverError()
         
-        if coordinate not in self.available_moves:
+        if coordinate not in self.legal_moves:
             raise InvalidMoveError(coordinate)
         
         # place the piece
@@ -178,10 +178,10 @@ class OthelloEngine:
         # switch players    
         self._switch_player()
         # check if opponent can move
-        if not self.available_moves:
+        if not self.legal_moves:
             self._switch_player()
             # check if both players have no moves -> game over
-            if not self.available_moves:
+            if not self.legal_moves:
                 score = self.score
                 if score[Player.WHITE] > score[Player.BLACK]:
                     result = GameResult.WHITE_WINS
@@ -189,7 +189,7 @@ class OthelloEngine:
                     result = GameResult.BLACK_WINS
                 else:
                     result = GameResult.DRAW
-                self._state = GameState(result=result)
+                self._state = GameState(result)
                 
                 
     def copy(self) -> "OthelloEngine":

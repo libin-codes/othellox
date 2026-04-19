@@ -70,7 +70,7 @@ class Grid(Widget):
         
            
     
-    def show_valid_moves(self, valid_moves):
+    def mark_valid_moves(self, valid_moves):
 
         for coord, cell in self.cells.items():
             cell.is_valid_move = coord in valid_moves

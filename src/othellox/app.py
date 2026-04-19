@@ -17,6 +17,7 @@ class Othello(App):
         super().__init__()
         self.game = OthelloEngine(8)
         
+        
 
     def compose(self)->ComposeResult:
         yield GameBoard(8)
@@ -25,7 +26,7 @@ class Othello(App):
         self.grid = self.query_one(Grid)
         self.game_board_header = self.query_one(GameBoardHeader) 
         self.grid.sync(self.game.board)
-        self.grid.show_valid_moves(self.game.available_moves)
+        self.grid.mark_valid_moves(self.game.legal_moves)
             
     ##################### Handlers #####################
         
@@ -40,7 +41,7 @@ class Othello(App):
         self.game.move(coord)
         # update the grid ui and display the valid moves
         self.grid.sync(self.game.board)
-        self.grid.show_valid_moves(self.game.available_moves)
+        self.grid.mark_valid_moves(self.game.legal_moves)
         # update game board header
         score = self.game.score
         self.game_board_header.update(score[Player.BLACK],score[Player.WHITE],self.game.current_player)

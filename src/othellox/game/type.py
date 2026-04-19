@@ -112,7 +112,7 @@ class GameState:
     Attributes:
         result: The GameResult if the game is over, None if the game is ongoing.
     """
-    result: GameResult | None  
+    _result: GameResult | None  
 
     @property
     def is_over(self) -> bool:
@@ -121,7 +121,7 @@ class GameState:
         Returns:
             True if the game is over, False otherwise.
         """
-        return self.result is not None
+        return self._result is not None
 
     @property
     def winner(self) -> Player | None:
@@ -130,9 +130,9 @@ class GameState:
         Returns:
             The winning Player (BLACK or WHITE), or None if the game is not over or is a draw.
         """
-        if self.result == GameResult.BLACK_WINS:
+        if self._result == GameResult.BLACK_WINS:
             return Player.BLACK
-        if self.result == GameResult.WHITE_WINS:
+        if self._result == GameResult.WHITE_WINS:
             return Player.WHITE
         return None
     
@@ -143,4 +143,4 @@ class GameState:
         Returns:
             True if the game is over and is a draw, False otherwise.
         """
-        return self.result == GameResult.DRAW
+        return self._result == GameResult.DRAW

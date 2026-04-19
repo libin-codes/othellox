@@ -17,7 +17,7 @@ class GameBoardHeader(Container):
         height:auto;
         layout:horizontal; 
         background:grey;
-        color:black;        
+        color:black;      
     
     }
     

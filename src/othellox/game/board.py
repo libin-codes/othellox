@@ -42,7 +42,7 @@ class Board:
         
         
     @property
-    def grid(self) -> list[list[BoardCell]]:
+    def squares(self) -> list[list[BoardCell]]:
         """Get a read-only copy of the board grid.
         
         Returns:
