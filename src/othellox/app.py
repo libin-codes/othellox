@@ -16,16 +16,15 @@ class Othello(App):
     def __init__(self):
         super().__init__()
         self.game = OthelloEngine(8)
-        
-        
+
 
     def compose(self)->ComposeResult:
-        yield GameBoard(8)
+        yield GameBoard(self.game.board.size)
         
     def on_mount(self):
         self.grid = self.query_one(Grid)
         self.game_board_header = self.query_one(GameBoardHeader) 
-        self.grid.sync(self.game.board)
+        self.grid.sync(self.game.board.squares)
         self.grid.mark_valid_moves(self.game.legal_moves)
             
     ##################### Handlers #####################
@@ -40,7 +39,7 @@ class Othello(App):
         # update the engine
         self.game.move(coord)
         # update the grid ui and display the valid moves
-        self.grid.sync(self.game.board)
+        self.grid.sync(self.game.board.squares)
         self.grid.mark_valid_moves(self.game.legal_moves)
         # update game board header
         score = self.game.score

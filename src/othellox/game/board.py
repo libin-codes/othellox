@@ -3,8 +3,7 @@
 This module handles the 2D game board, cell access, and board visualization.
 It provides a clean interface for placing pieces and rendering the board state.
 """
-
-from .type import Coordinate,BoardCell,Player
+from .type import Coordinate,Player
 
 class Board:
     """Manages the Othello game board.
@@ -22,11 +21,11 @@ class Board:
             size: The side length of the square board (default: 8).
         """
         self.size = size
-        self._board: list[list[BoardCell]] = [[None for cell in range(self.size)] for row in range(self.size)]
+        self._board: list[list[Player | None]] = [[None for cell in range(self.size)] for row in range(self.size)]
         
     
 
-    def __getitem__(self, coordinate: Coordinate) -> BoardCell:
+    def __getitem__(self, coordinate: Coordinate) -> Player | None:
         """Get the cell value at a given coordinate.
         
         Args:
@@ -39,16 +38,27 @@ class Board:
     
     def _set(self, coordinate: Coordinate, value:Player | None):
         self._board[coordinate.y][coordinate.x] = value
-        
-        
-    @property
-    def squares(self) -> list[list[BoardCell]]:
-        """Get a read-only copy of the board grid.
-        
+    
+    @property 
+    def squares(self) -> dict[str, Player | None]:
+        """data in each sqaure
+
         Returns:
-            A deep copy of the internal board representation.
+            dict[str,BoardCell]: maps coordinate to data(Player | None) in that sqaure
         """
-        return [row[:] for row in self._board]
+        
+        y_coordinates = range(self.size,0,-1)
+        x_coordinates = [chr(ord("a") + i) for i in range(self.size)]
+        
+        squares = {}
+        
+        for y,row in zip(y_coordinates,self._board[::-1]):
+            for x,data in zip(x_coordinates,row):
+                squares[f"{x}{y}"] = data
+                
+        return squares
+        
+        ...
 
     @property
     def ascii(self) -> str:
@@ -63,9 +73,9 @@ class Board:
         #header
         ascii_board += "  ┌" + "─────┬" * (self.size - 1) + "─────┐\n"
 
-        for i, row in enumerate(self._board[::-1]):
+        for y, row in zip(range(self.size,0,-1),self._board[::-1]):
             # y - axis
-            ascii_board += f"{(self.size - i)-1} │"
+            ascii_board += f"{y} │"
             # board
             for cell in row:
                 match cell:
@@ -77,7 +87,7 @@ class Board:
                         content = " ⚪  "
                 ascii_board += content + "│"
             ascii_board += "\n"
-            if  i != self.size - 1:
+            if  y != 1:
                 ascii_board += "  ├" + "─────┼" * (self.size - 1) + "─────┤\n"
             else:
             # footer
@@ -85,7 +95,8 @@ class Board:
             
         # x - axis
         ascii_board += "   "
-        for x in range(self.size): ascii_board += f"{x:^5} "
+        x_coordinates = [chr(ord("a") + i) for i in range(self.size)]
+        for x in x_coordinates: ascii_board += f"{x:^5} "
         return ascii_board
     
     def is_bound(self, coord: Coordinate) -> bool:

@@ -26,6 +26,6 @@ class YCoordinateLabels(Vertical):
     
     
     def compose(self):
-        for y in range(self.grid_size):
+        for y in range(self.grid_size-1,-1,-1):
             yield Static(f"[bold]{y+1}[/]",classes="y-coordinates")
 

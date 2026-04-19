@@ -30,15 +30,19 @@ class Grid(Widget):
     def __init__(self,grid_size:int):
         super().__init__()
         self.grid_size = grid_size
-        self.cells:dict[Coordinate,Cell] = {}
+        self.cells:dict[str,Cell] = {}
         
     def compose(self):
-        for y in range(self.grid_size-1,-1,-1):
+        
+        y_coordinates = range(self.grid_size,0,-1)
+        x_coordinates = [chr(ord("a") + i) for i in range(self.grid_size)]
+        
+        for y in y_coordinates:
             with Horizontal(classes="grid-rows"):
-                for x in range(self.grid_size):
-                    coordinate = Coordinate(x,y)
-                    shade = Shade((x + y) % 2)
-                    yield Cell(coordinate,shade)
+                for x in x_coordinates:
+                    shade = Shade((ord(x) + y) % 2)
+                    yield Cell(f"{x}{y}",shade)
+        
 
                                  
     def on_mount(self):
@@ -47,11 +51,11 @@ class Grid(Widget):
             for cell in self.query(Cell)
         }
         
-    def get_cell(self, coord: Coordinate) -> Cell:
+    def get_cell(self, coord: str) -> Cell:
         return self.cells[coord]
     
     
-    def sync(self,board:Board):
+    def sync(self,board:dict[str,Player | None]):
         """syncs the engine board with ui board
 
         Args:
@@ -80,7 +84,7 @@ class Grid(Widget):
             cell.is_valid_move = False
                 
                 
-    def highlight_cell(self,coordinate:Coordinate):
+    def highlight_cell(self,coordinate:str):
         self.get_cell(coordinate).highlight = True
         
     def clear_highlight(self):

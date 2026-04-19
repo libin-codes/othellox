@@ -36,7 +36,7 @@ class Cell(Widget):
     
     class Clicked(Message):
         
-        def __init__(self,coordinate:Coordinate) -> None:
+        def __init__(self,coordinate:str) -> None:
             self.coordinate = coordinate
             super().__init__()
     
@@ -45,7 +45,7 @@ class Cell(Widget):
     highlight  = reactive(False)
 
     
-    def __init__(self,coordinate:Coordinate,background_shade:Shade,color:Color = Color.parse("green")):
+    def __init__(self,coordinate:str,background_shade:Shade,color:Color = Color.parse("green")):
         """
         Args:
             coordinate (Coordinate): cell coordinate
