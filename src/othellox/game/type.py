@@ -5,7 +5,7 @@ including player representations, board coordinates, directional movements, and 
 
 Types:
     Player: Enumeration for game players (BLACK, WHITE).
-    Coordinate: Immutable coordinate representation for board positions.
+    Index: Immutable coordinate representation for board positions.
     Direction: Enumeration for eight directional movements on the board.
     GameResult: Enumeration for possible game outcomes.
     GameState: Frozen dataclass representing the current game state.
@@ -29,9 +29,14 @@ class Player(Enum):
     WHITE = 1
     
 
+Square:TypeAlias = str
+''' 
+Represents Algebraic Notation. ex: "a1", "e3", "h3", etc
+'''
+
 
 @dataclass(frozen=True)
-class Coordinate:
+class Index:
     """Immutable coordinate representation for board positions.
     
     Attributes:
@@ -41,7 +46,7 @@ class Coordinate:
     x: int
     y: int
 
-    def walk(self, direction: "Direction", steps: int = 1) -> "Coordinate":
+    def walk(self, direction: "Direction", steps: int = 1) -> "Index":
         """Move in a given direction by a specified number of steps.
         
         Args:
@@ -49,9 +54,9 @@ class Coordinate:
             steps: Number of steps to move (default: 1).
             
         Returns:
-            A new Coordinate representing the destination position.
+            A new Index representing the destination position.
         """
-        return Coordinate(
+        return Index(
             self.x + direction.dx * steps,
             self.y + direction.dy * steps
         )

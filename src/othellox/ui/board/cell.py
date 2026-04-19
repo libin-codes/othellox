@@ -2,11 +2,8 @@ from enum import Enum
 from textual.events import Click
 from textual.message import Message
 from textual.widget import Widget
-from textual.widgets import Static
 from textual.reactive import reactive
-from othellox.game.type import Coordinate
 from textual.color import Color
-from rich.text import Text
 
 class CellData(Enum):
     EMPTY = ""
@@ -48,7 +45,7 @@ class Cell(Widget):
     def __init__(self,coordinate:str,background_shade:Shade,color:Color = Color.parse("green")):
         """
         Args:
-            coordinate (Coordinate): cell coordinate
+            coordinate (Index): cell coordinate
             background_shade (Shade): 0 or 1 , 0 -> light, 1 -> dark
         """
         super().__init__()

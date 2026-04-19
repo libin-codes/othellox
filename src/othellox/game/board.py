@@ -3,13 +3,13 @@
 This module handles the 2D game board, cell access, and board visualization.
 It provides a clean interface for placing pieces and rendering the board state.
 """
-from .type import Coordinate,Player
+from .type import Index,Player
 
 class Board:
     """Manages the Othello game board.
     
     The board is a square grid (typically 8x8) where pieces (players) are placed.
-    It provides indexing via Coordinate objects and ASCII visualization.
+    It provides indexing via Index objects and ASCII visualization.
     
     Attributes:
         size: The dimensions of the square board (size x size).
@@ -25,26 +25,26 @@ class Board:
         
     
 
-    def __getitem__(self, coordinate: Coordinate) -> Player | None:
+    def __getitem__(self, index: Index) -> Player | None:
         """Get the cell value at a given coordinate.
         
         Args:
-            coordinate: The Coordinate of the cell to access.
+            index: The Index of the cell to access.
             
         Returns:
             The cell value (Player or None).
         """
-        return self._board[coordinate.y][coordinate.x]
+        return self._board[index.y][index.x]
     
-    def _set(self, coordinate: Coordinate, value:Player | None):
+    def _set(self, coordinate: Index, value:Player | None):
         self._board[coordinate.y][coordinate.x] = value
     
-    @property 
-    def squares(self) -> dict[str, Player | None]:
+   
+    def to_squares(self) -> dict[str, Player | None]:
         """data in each sqaure
 
         Returns:
-            dict[str,BoardCell]: maps coordinate to data(Player | None) in that sqaure
+            dict[str,BoardCell]: maps each sqaure to its data (Player | None)
         """
         
         y_coordinates = range(self.size,0,-1)
@@ -99,11 +99,11 @@ class Board:
         for x in x_coordinates: ascii_board += f"{x:^5} "
         return ascii_board
     
-    def is_bound(self, coord: Coordinate) -> bool:
+    def is_bound(self, coord: Index) -> bool:
         """Check if a coordinate is within board boundaries.
         
         Args:
-            coord: The Coordinate to check.
+            coord: The Index to check.
             
         Returns:
             True if the coordinate is within the board, False otherwise.

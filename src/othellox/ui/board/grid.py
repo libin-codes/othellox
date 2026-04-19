@@ -1,12 +1,8 @@
 from textual.widget import Widget
-from textual.containers import Container,Center, Horizontal, Vertical
-from textual.widgets import Placeholder, Static
-from othellox.game.board import Board
-from othellox.ui.board.board_header import GameBoardHeader
+from textual.containers import Horizontal
 from othellox.ui.board.cell import Cell, CellData,Shade
-from othellox.game.type import Coordinate,BoardCell, Player
-from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
-from othellox.ui.board.y_coordinate_labels import YCoordinateLabels
+from othellox.game.type import  Player
+
 
 class Grid(Widget):
     
@@ -60,7 +56,7 @@ class Grid(Widget):
 
         Args:
             board (Board): The game engine board
-            valid_moves (list[Coordinate]): list of valid moves
+            valid_moves (list[Index]): list of valid moves
         """
         for coord, cell_ui in self.cells.items():
             cell_data = board[coord]    

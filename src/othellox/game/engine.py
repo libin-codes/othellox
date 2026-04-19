@@ -11,7 +11,7 @@ and capturing opponent pieces by flanking them with their own pieces.
 '''  
 
 from .board import Board
-from .type import Player,Coordinate,GameResult,GameState,Direction
+from .type import Square, Player,Index,GameResult,GameState,Direction
 from .error import InvalidMoveError,GameOverError,InvalidBoardSizeError
 from typing import Dict
     
@@ -43,11 +43,11 @@ class OthelloEngine:
         This follows standard Othello rules for an 8x8 board.
         """
         center = (self.board.size//2) - 1
-        self.board._set(Coordinate(center+1,center), Player.WHITE)
-        self.board._set(Coordinate(center,center+1), Player.WHITE)
+        self.board._set(Index(center+1,center), Player.WHITE)
+        self.board._set(Index(center,center+1), Player.WHITE)
 
-        self.board._set(Coordinate(center,center),Player.BLACK)
-        self.board._set(Coordinate(center+1,center+1), Player.BLACK)
+        self.board._set(Index(center,center),Player.BLACK)
+        self.board._set(Index(center+1,center+1), Player.BLACK)
         
     @property
     def current_player(self) -> Player:
@@ -72,7 +72,7 @@ class OthelloEngine:
         white_score = 0
         black_score = 0
         
-        for cell in self.board.squares.values():
+        for cell in self.board.to_squares().values():
             match cell:
                 case Player.WHITE:
                     white_score += 1
@@ -86,22 +86,23 @@ class OthelloEngine:
         }
         
     @property
-    def legal_moves(self) -> list[str]:
+    def legal_moves(self) -> list[Square]:
         """Get all valid moves for the current player.
         
-        A valid move is an empty cell where placing a piece would outflank
+        A valid move is an empty sqaure where placing a piece would outflank
         at least one opponent piece in any direction.
         
         Returns:
-            A list of Coordinate objects representing valid moves.
+            A list of Sqaure representing valid moves.
+            where Sqaure -> Algebraic notation. ex: "a1", "b2", "h3", etc
         """
         possible_moves = set()
         for y in range(self.board.size):
             for x in range(self.board.size):
-                start = Coordinate(x, y) 
+                start = Index(x, y) 
                 if self.board[start] is None and self._outflank(start):
                     possible_moves.add(start)
-        return [self._coordinate_to_square(move) for move in possible_moves]
+        return [self._index_to_sqaure(move) for move in possible_moves]
     
     @property 
     def state(self) -> GameState:
@@ -116,7 +117,7 @@ class OthelloEngine:
         """Switch the current player to the opponent."""
         self._current_player = self.opponent_player
             
-    def _outflank(self, start: Coordinate) -> list[Coordinate]:
+    def _outflank(self, start: Index) -> list[Index]:
         """Find all opponent pieces that would be outflanked by placing at start.
         
         Traverses in all 8 directions from the start position, collecting opponent
@@ -124,15 +125,15 @@ class OthelloEngine:
         (no outflank), or empty cell (no outflank) is reached.
         
         Args:
-            start: The Coordinate of the potential placement location.
+            start: The Index of the potential placement location.
             
         Returns:
-            A list of opponent piece Coordinates that would be flipped by this move.
+            A list of opponent piece Indexs that would be flipped by this move.
                 Returns empty list if no outflanking occurs.
         """
-        opponent_coins: list[Coordinate] = []
+        opponent_coins: list[Index] = []
         for direction in Direction:
-            path: list[Coordinate] = []
+            path: list[Index] = []
             pos = start.walk(direction)        
             # traverse through opponents 
             while (self.board.is_bound(pos) and self.board[pos] == self.opponent_player):
@@ -145,43 +146,33 @@ class OthelloEngine:
                                 
 
     
-    def _flip_coins(self, coordinate: Coordinate) -> None:
+    def _flip_coins(self, index: Index) -> None:
         """Flip (convert) all opponent pieces outflanked by a move.
         
         Args:
-            coordinate: The Coordinate where the current player placed a piece.
+            coordinate: The Index where the current player placed a piece.
         """
-        for opponent_coin in self._outflank(coordinate):
+        for opponent_coin in self._outflank(index):
             self.board._set(opponent_coin,self.current_player)
-    '''     
-    def square_to_index(square: Square) -> Coordinate:
-        col = ord(square[0]) - ord('a')
-        row = int(square[1]) - 1
-        return Coordinate(row, col)
-
-    def index_to_square(idx: Coordinate) -> Square:
-        return f"{chr(idx.col + ord('a'))}{idx.row + 1}"
-               
-    '''
     
-    def _coordinate_to_square(self,coord: Coordinate) -> str:
+    def _index_to_sqaure(self,coord: Index) -> Square:
 
         return f"{chr(coord.x + ord('a'))}{coord.y + 1}"
     
-    def _square_to_coordinate(self,square:str):
-        x = ord(square[0]) - ord('a')
-        y = int(square[1]) - 1
-        return Coordinate(x,y)
+    def _sqaure_to_index(self,sqaure:Square) -> Index:
+        x = ord(sqaure[0]) - ord('a')
+        y = int(sqaure[1]) - 1
+        return Index(x,y)
 
             
-    def move(self, square: str) -> None:
+    def move(self, sqaure: Square) -> None:
         """Execute a move for the current player.
         
         Places a piece at the given coordinate, flips all outflanked opponent pieces,
         switches to the opponent, and checks for end-game conditions.
         
         Args:
-            sqaure : sqaure to move, ex: "a1", "b5, "c3", etc
+            sqaure : represents algebraic notation, ex: "a1", "e3, "h3", etc
             
         Raises:
             InvalidMoveError: If the coordinate is not a valid move for the current player.
@@ -191,15 +182,15 @@ class OthelloEngine:
         if self._state.is_over:
             raise GameOverError()
         
-        if square not in self.legal_moves:
-            raise InvalidMoveError(square)
+        if sqaure not in self.legal_moves:
+            raise InvalidMoveError(sqaure)
         
-        coordinate = self._square_to_coordinate(square)
+        index = self._sqaure_to_index(sqaure)
         
         # place the piece
-        self.board._set(coordinate,self.current_player)
+        self.board._set(index,self.current_player)
         # flip opponent coins
-        self._flip_coins(coordinate)
+        self._flip_coins(index)
         # switch players    
         self._switch_player()
         # check if opponent can move
@@ -224,7 +215,7 @@ class OthelloEngine:
         
         for y in range(self.board.size):
             for x in range(self.board.size):
-                coord = Coordinate(x, y)
+                coord = Index(x, y)
                 new_game.board._set(coord, self.board[coord])
                 
         return new_game

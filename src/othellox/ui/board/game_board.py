@@ -1,15 +1,9 @@
-
-from unittest.mock import DEFAULT
-
 from textual.widget import Widget
-from textual.app import App,ComposeResult
-from textual.containers import Center,Container, Vertical
+from textual.app import ComposeResult
+from textual.containers import  Vertical
 
-
-from othellox.game.type import Coordinate,BoardCell,Player
 from othellox.ui.board.board_header import GameBoardHeader
 from othellox.ui.board.grid import Grid
-from othellox.ui.board.cell import Cell,CellData
 from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
 from othellox.ui.board.y_coordinate_labels import YCoordinateLabels
 
