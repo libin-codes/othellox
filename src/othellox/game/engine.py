@@ -24,11 +24,12 @@ class OthelloEngine:
             size: The board size - side length of the square board (default: 8 ,minimum:6, maximum:20).
                   Set up standard Othello with the starting configuration.
         """
-        if not (6 <= size <= 20):
+        if not (6 <= size <= 26):
             raise InvalidBoardSizeError("size must be between 6 and 20")
         if size % 2 != 0:
             raise InvalidBoardSizeError("size must be even")
         self.board = Board(size)
+        self._history:list[Square] = []
         self._current_player = Player.BLACK
         self._state = GameState(None)
         self._set_starting_positions()
@@ -43,15 +44,19 @@ class OthelloEngine:
         This follows standard Othello rules for an 8x8 board.
         """
         center = (self.board.size//2) - 1
-        self.board._set(Index(center+1,center), Player.WHITE)
-        self.board._set(Index(center,center+1), Player.WHITE)
+        self.board._set(Index(center+1,center), Player.BLACK)
+        self.board._set(Index(center,center+1), Player.BLACK)
 
-        self.board._set(Index(center,center),Player.BLACK)
-        self.board._set(Index(center+1,center+1), Player.BLACK)
+        self.board._set(Index(center,center),Player.WHITE)
+        self.board._set(Index(center+1,center+1), Player.WHITE)
         
     @property
     def current_player(self) -> Player:
         return self._current_player
+    
+    @property
+    def history(self) -> list[Square]:
+        return self._history
         
     @property
     def opponent_player(self) -> Player:
@@ -102,7 +107,10 @@ class OthelloEngine:
                 start = Index(x, y) 
                 if self.board[start] is None and self._outflank(start):
                     possible_moves.add(start)
-        return [self._index_to_sqaure(move) for move in possible_moves]
+                    
+        possible_moves = [self._index_to_sqaure(move) for move in possible_moves]
+        possible_moves.sort()
+        return possible_moves
     
     @property 
     def state(self) -> GameState:
@@ -184,6 +192,8 @@ class OthelloEngine:
         
         if sqaure not in self.legal_moves:
             raise InvalidMoveError(sqaure)
+        
+        self._history.append(sqaure)
         
         index = self._sqaure_to_index(sqaure)
         

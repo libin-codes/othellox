@@ -52,8 +52,8 @@ class GameBoardHeader(Container):
         yield Label(f"{"⚫" if self.current_player == Player.BLACK else "⚪"} 's Turn",id="current-player-label")
         with Container(id="score-container"):
             yield Label("Score : ")
-            yield Label(f"⚫ {self.black_pts}",id="black-pts-label")
-            yield Label(f"⚪ {self.white_pts}",id="white-pts-label")
+            yield Label(f"⚫ {self.black_pts:02}",id="black-pts-label")
+            yield Label(f"⚪ {self.white_pts:02}",id="white-pts-label")
 
 
     def update(self,black_pts:int,white_pts:int,current_player:Player):

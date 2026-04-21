@@ -11,7 +11,7 @@ class YCoordinateLabels(Vertical):
         padding-top:1;
     }
     .y-coordinates{
-        width:3;
+        width:3 ;
         height:3;
         content-align:center middle;
     }

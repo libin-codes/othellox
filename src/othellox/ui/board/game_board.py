@@ -6,7 +6,7 @@ from othellox.ui.board.board_header import GameBoardHeader
 from othellox.ui.board.grid import Grid
 from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
 from othellox.ui.board.y_coordinate_labels import YCoordinateLabels
-
+from othellox.ui.move_history_container import MoveHistory
     
 
 class GameBoard(Widget):
@@ -45,5 +45,8 @@ class GameBoard(Widget):
             yield GameBoardHeader()
             yield Grid(self.grid_size)
             yield XCoordinateLabels(self.grid_size)
+            
+            
+        
         
         
