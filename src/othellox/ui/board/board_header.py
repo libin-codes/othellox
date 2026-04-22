@@ -16,8 +16,8 @@ class GameBoardHeader(Container):
         width:100%;
         height:auto;
         layout:horizontal; 
-        background:grey;
-        color:black;      
+        background:$panel;
+     
     
     }
     
@@ -49,7 +49,7 @@ class GameBoardHeader(Container):
     
     def compose(self):
         
-        yield Label(f"{"⚫" if self.current_player == Player.BLACK else "⚪"} 's Turn",id="current-player-label")
+        yield Label(f"Turn : {"⚫" if self.current_player == Player.BLACK else "⚪"}",id="current-player-label")
         with Container(id="score-container"):
             yield Label("Score : ")
             yield Label(f"⚫ {self.black_pts:02}",id="black-pts-label")

@@ -3,17 +3,17 @@ from textual.app import ComposeResult
 from textual.containers import  Vertical
 
 from othellox.ui.board.board_header import GameBoardHeader
-from othellox.ui.board.grid import Grid
+from othellox.ui.board.grid import GameGrid
 from othellox.ui.board.x_coordinate_labels import XCoordinateLabels
 from othellox.ui.board.y_coordinate_labels import YCoordinateLabels
-from othellox.ui.move_history_container import MoveHistory
+from othellox.ui.move_history import MoveHistory
     
 
 class GameBoard(Widget):
     DEFAULT_CSS = """
     GameBoard{
         layout:horizontal;
-        background:grey;
+        background:$panel;
         width:auto;
         height:auto;
         padding-right:1;
@@ -43,7 +43,7 @@ class GameBoard(Widget):
         # grid
         with Vertical(id="grid-container"):
             yield GameBoardHeader()
-            yield Grid(self.grid_size)
+            yield GameGrid(self.grid_size)
             yield XCoordinateLabels(self.grid_size)
             
             

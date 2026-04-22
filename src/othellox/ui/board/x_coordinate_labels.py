@@ -11,12 +11,13 @@ class XCoordinateLabels(Horizontal):
         width:7;
         height:1;
         content-align:center middle;
-        color:black;
+        
     }
     
     XCoordinateLabels{
         width:auto;
         height:auto;
+        background:$panel;
     }
     
     

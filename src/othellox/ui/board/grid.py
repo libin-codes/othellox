@@ -4,10 +4,10 @@ from othellox.ui.board.cell import Cell, CellData,Shade
 from othellox.game.type import  Player
 
 
-class Grid(Widget):
+class GameGrid(Widget):
     
     DEFAULT_CSS = '''
-    Grid{
+    GameGrid{
         width:auto;
         height:auto;
                 

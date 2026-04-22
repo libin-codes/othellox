@@ -1,19 +1,20 @@
 
+from textual import on
 from textual.app import App,ComposeResult
 from textual.containers import Container
-from textual.widgets import Input
+from textual.events import MouseMove
+from textual.widgets import Footer, Input
 
 
 from othellox.game.type import Player, Square
 from othellox.ui.board.board_header import GameBoardHeader
-from othellox.ui.board.grid import Grid
+from othellox.ui.board.grid import GameGrid
 from othellox.ui.board.cell import Cell
 
 from othellox.game.engine import OthelloEngine
 from othellox.ui.board.game_board import GameBoard
-from othellox.ui.move_history_container import MoveHistory
-from othellox.ui.move_input import MoveInput
-from othellox.ui.possible_move_container import PossibleMoves
+from othellox.ui.move_history import MoveHistory
+from othellox.ui.move_selection import MoveSelection
 
 class Othello(App):
     
@@ -22,7 +23,7 @@ class Othello(App):
         width:100%;
         height:100%;
         align:center middle;
-        background:green;
+        background:$background;
         hatch: left green 10%;
         
     }
@@ -52,38 +53,39 @@ class Othello(App):
         with Container(id="app-container"):
             yield MoveHistory(self.game.board.size)
             yield GameBoard(self.game.board.size)
-            with Container(id="side-panel"):
-                yield PossibleMoves()
-                yield MoveInput()
+            
+            yield MoveSelection()
+            
+        yield Footer()
+            
         
     def on_mount(self):
-        self.grid = self.query_one(Grid)
-        self.possible_moves_container = self.query_one(PossibleMoves)
+        self.grid = self.query_one(GameGrid)
+        self.move_selection = self.query_one(MoveSelection)
         self.move_history_container = self.query_one(MoveHistory)
-        self.move_input = self.query_one(MoveInput)
-        self.move_input.legal_moves = self.game.legal_moves
+       
+        
         self.game_board_header = self.query_one(GameBoardHeader) 
         self.grid.sync(self.game.board.to_squares())
         self.grid.mark_valid_moves(self.game.legal_moves)
-        self.possible_moves_container.update_possible_moves(self.game.legal_moves)
+        self.move_selection.moves = (self.game.legal_moves)
         
         
     def update_game(self,coord:Square):
         # clear the highlighted cell and valid move hints
         self.grid.clear_highlight()
         self.grid.clear_valid_moves()
-        # highlight the user click
-        self.grid.highlight_cell(coord)
+       
         # update the engine
         self.game.move(coord)
         # update the grid ui and display the valid moves
         self.grid.sync(self.game.board.to_squares())
         self.grid.mark_valid_moves(self.game.legal_moves)
-        self.move_input.legal_moves = self.game.legal_moves
+        
         # update game board header
         score = self.game.score
         self.game_board_header.update(score[Player.BLACK],score[Player.WHITE],self.game.current_player)
-        self.possible_moves_container.update_possible_moves(self.game.legal_moves)
+        self.move_selection.moves = (self.game.legal_moves)
         self.move_history_container.update_history(self.game.history)
             
     ##################### Handlers #####################
@@ -92,8 +94,20 @@ class Othello(App):
         self.update_game(message.coordinate)
         
         
-    def on_move_input_submitted(self,message:MoveInput.Submitted):
+    def on_move_selection_selected(self,message:MoveSelection.Selected):
         self.update_game(message.move)
+        
+        
+    def on_move_selection_highlighted(self,message:MoveSelection.Highlighted):
+        self.grid.clear_highlight()
+        self.grid.highlight_cell(message.move)
+        
+        
+    @on(MouseMove)
+    def handle_mouse_move(self):
+        if self.move_selection.highlighted_index:
+            self.move_selection.highlighted_index = None
+            self.grid.clear_highlight()
 
             
 
