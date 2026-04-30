@@ -25,20 +25,17 @@ class Cell(Widget):
         content-align-vertical: middle;
         &:hover{
             opacity:80%;
-        }
-    
-        
+        } 
     }
     """
     
     class Clicked(Message):
-        
         def __init__(self,coordinate:str) -> None:
             self.coordinate = coordinate
             super().__init__()
     
     data = reactive(CellData.EMPTY)
-    is_valid_move = reactive(False)
+    is_hint = reactive(False)
     highlight  = reactive(False)
 
     
@@ -57,10 +54,9 @@ class Cell(Widget):
     def on_mount(self):
         self.styles.background = self.color.darken(0.02) if self.shade == Shade.DARK else self.color
        
-        
-        
+    
     def render(self):
-        if not self.is_valid_move:
+        if not self.is_hint:
             return self.data.value
         return "[darkred]●[/]"
     
@@ -72,10 +68,8 @@ class Cell(Widget):
         else:
             self.styles.background_tint = None
         
-        
-    
-    
     def on_click(self,event:Click):
-        if self.is_valid_move:
-            self.app.post_message(self.Clicked(self.coordinate))
+        if self.is_hint:
+            self.post_message(self.Clicked(self.coordinate))
+          
           
