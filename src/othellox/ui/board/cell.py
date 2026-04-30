@@ -1,19 +1,10 @@
-from enum import Enum
 from textual.events import Click
 from textual.message import Message
 from textual.widget import Widget
 from textual.reactive import reactive
 from textual.color import Color
+from ..type import CellData,Shade
 
-class CellData(Enum):
-    EMPTY = ""
-    WHITE = "⚪"
-    BLACK = "⚫"
-    
-    
-class Shade(Enum):
-    LIGHT = 0
-    DARK = 1
     
     
 class Cell(Widget):
@@ -26,6 +17,10 @@ class Cell(Widget):
         &:hover{
             opacity:80%;
         } 
+        
+        &:disabled:hover {
+            opacity: 100%;
+        }
     }
     """
     
@@ -50,6 +45,7 @@ class Cell(Widget):
         self.coordinate = coordinate
         self.shade = background_shade
         self.color = color
+        
         
     def on_mount(self):
         self.styles.background = self.color.darken(0.02) if self.shade == Shade.DARK else self.color

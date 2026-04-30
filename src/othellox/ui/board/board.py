@@ -9,6 +9,8 @@ from othellox.game.type import Player, Square
 from othellox.ui.board.header import GameBoardHeader
 from othellox.ui.board.cell import Cell, CellData
 from othellox.ui.board.grid import GameGrid
+
+from textual.widgets import Button
     
 
 class OthelloBoard(Widget):
@@ -35,6 +37,7 @@ class OthelloBoard(Widget):
     
     highlighted_index = reactive[Optional[int]](None, init=False)
     hints = reactive[list[Square]]([],init=False)
+
     
     def __init__(self,grid_size):
         super().__init__()
@@ -44,6 +47,7 @@ class OthelloBoard(Widget):
     def on_mount(self):
         self.header = self.query_one(GameBoardHeader)
         self.grid = self.query_one(GameGrid)
+        self.disabled = True
        
     
     def compose(self)->ComposeResult:
@@ -60,12 +64,6 @@ class OthelloBoard(Widget):
             
             
     class CellClicked(Message):
-        def __init__(self,move:Square):
-            super().__init__()
-            self.move = move
-            
-            
-    class CellHovered(Message):
         def __init__(self,move:Square):
             super().__init__()
             self.move = move
@@ -115,6 +113,7 @@ class OthelloBoard(Widget):
             self.header.score  = score
             
         if heading != None:
+            
             self.header.heading = heading
         
         
@@ -133,18 +132,21 @@ class OthelloBoard(Widget):
     ####### binding actions ############
     
     def action_navigate_right(self):
-        if self.highlighted_index is None:
-            self.highlighted_index = 0
-        else:
-            self.highlighted_index = (self.highlighted_index + 1) % len(self.hints)
+        if self.hints:
+            if self.highlighted_index is None:
+                self.highlighted_index = 0
+            else:
+                self.highlighted_index = (self.highlighted_index + 1) % len(self.hints)
                 
     def action_navigate_left(self):
-        if self.highlighted_index is None:
-            self.highlighted_index = 0
-        else:
-            self.highlighted_index = (self.highlighted_index - 1) % len(self.hints)
+        if self.hints:
+            if self.highlighted_index is None:
+                self.highlighted_index = 0
+            else:
+                self.highlighted_index = (self.highlighted_index - 1) % len(self.hints)
             
     def action_cell_click(self):
+        
         if self.highlighted_index != None:
             self.post_message(self.CellClicked(self.hints[self.highlighted_index]))
             
