@@ -21,7 +21,7 @@ class Othello(App):
     
     def __init__(self):
         super().__init__()
-        self.game = OthelloEngine(12)
+        self.game = OthelloEngine(8)
 
 
     def compose(self)->ComposeResult:
