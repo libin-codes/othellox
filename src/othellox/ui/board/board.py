@@ -9,11 +9,9 @@ from othellox.game.type import Player, Square
 from othellox.ui.board.header import GameBoardHeader
 from othellox.ui.board.cell import Cell, CellData
 from othellox.ui.board.grid import GameGrid
-
-from textual.widgets import Button
     
 
-class OthelloBoard(Widget):
+class OthelloBoard(Widget,can_focus=True):
     
     """
     Interactive Othello/Reversi game board widget.
@@ -57,32 +55,30 @@ class OthelloBoard(Widget):
         height:auto;
         padding-left:1;
         padding-right:1;
-        border-bottom:thick transparent;
+        border-bottom:thick transparent;    
     }
 
     """
- 
-    can_focus = True
+    
+    GAME_CONTROLS_GROUP = ""
     
     BINDINGS = [
-        Binding("left,a","navigate_left"),
-        Binding("right,d","navigate_right"),
-        Binding("enter","cell_click")
+        Binding("left,a","navigate_left",description="move left",system=True),
+        Binding("right,d","navigate_right",description="move right",system=True),
+        Binding("enter","cell_click",description="play",system=True)
     ]
     
     highlighted_index = reactive[Optional[int]](None, init=False)
     hints = reactive[list[Square]]([],init=False)
-
     
-    def __init__(self,grid_size):
+    
+    def __init__(self,grid_size:int,enable_keyboard_controls = True):
         super().__init__()
         self.grid_size = grid_size
-        
         
     def on_mount(self):
         self.header = self.query_one(GameBoardHeader)
         self.grid = self.query_one(GameGrid)
-        self.disabled = True
        
     
     def compose(self)->ComposeResult:
@@ -167,25 +163,32 @@ class OthelloBoard(Widget):
     ####### binding actions ############
     
     def action_navigate_right(self):
-        if self.hints:
-            if self.highlighted_index is None:
-                self.highlighted_index = 0
-            else:
-                self.highlighted_index = (self.highlighted_index + 1) % len(self.hints)
+        if self.highlighted_index is None:
+            self.highlighted_index = 0
+        else:
+            self.highlighted_index = (self.highlighted_index + 1) % len(self.hints)
                 
     def action_navigate_left(self):
-        if self.hints:
-            if self.highlighted_index is None:
-                self.highlighted_index = 0
-            else:
-                self.highlighted_index = (self.highlighted_index - 1) % len(self.hints)
+        if self.highlighted_index is None:
+            self.highlighted_index = 0
+        else:
+            self.highlighted_index = (self.highlighted_index - 1) % len(self.hints)
             
     def action_cell_click(self):
         
         if self.highlighted_index != None:
             self.post_message(self.CellClicked(self.hints[self.highlighted_index]))
+            self.refresh_bindings()
+            
+    def check_action(
+        self, action: str, parameters: tuple[object, ...]
+    ) -> bool | None:  
+        if action in ["navigate_left","navigate_right","cell_click"] and (not self.hints) :
+            return False
+        return True
             
         
     @on(Cell.Clicked)    
     def handle_cell_click(self,event:Cell.Clicked):
         self.post_message(self.CellClicked(event.coordinate))
+        self.refresh_bindings()

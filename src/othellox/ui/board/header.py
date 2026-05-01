@@ -45,6 +45,6 @@ class GameBoardHeader(Container):
         super().__init__()
     
     def compose(self):
-        yield Label(f"[bold dim]T:[/]{"⚫" if self.current_player == Player.BLACK else "⚪"}",id="current-player-label")
+        yield Label(f"[bold]T:[/]{"⚫" if self.current_player == Player.BLACK else "⚪"}",id="current-player-label")
         yield Label(f"[bold dim]{self.heading}[/]",id="heading-label")
-        yield Label(f"[bold dim]S:[/]⚫ {self.score[Player.BLACK]:02} ⚪ {self.score[Player.WHITE]:02}",id="score-label")
+        yield Label(f"[bold]S:[/]⚫ {self.score[Player.BLACK]:02} ⚪ {self.score[Player.WHITE]:02}",id="score-label")

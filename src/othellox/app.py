@@ -1,7 +1,8 @@
+
 from textual import on
 from textual.app import App,ComposeResult
-from textual.widgets import Footer
-from othellox.game.type import Square
+from textual.widgets import Footer, Header
+from othellox.game.type import Player, Square
 from othellox.game.engine import OthelloEngine
 from othellox.ui.board.board import OthelloBoard
 
@@ -9,24 +10,18 @@ class Othello(App):
     
     DEFAULT_CSS = """
     Screen{
-        width:100%;
-        height:100%;
         align:center middle;
         background:$background;
         hatch: left green 10%;
         
     }
-    #side-panel{
-        width:auto;
-        height:100%;
-        align:center bottom;
-    }
+   
     """
     
     
     def __init__(self):
         super().__init__()
-        self.game = OthelloEngine(8)
+        self.game = OthelloEngine(12)
 
 
     def compose(self)->ComposeResult:
@@ -43,13 +38,24 @@ class Othello(App):
     def update_game(self,coord:Square):
         # update the engine
         self.game.move(coord)
-        # clear the previous highlighted cell and valid move hints
+        # clear the previous highlighted cell and legal move hints
         self.game_board.clear_highlight()
         self.game_board.clear_hints()
-        # update the grid ui and display the current valid moves
+        # update cell content and display the current legal moves
         self.game_board.update_cells(self.game.board.to_squares())
         self.game_board.diaplay_hints(self.game.legal_moves)
-        self.game_board.update_header(self.game.current_player,self.game.score)
+        #update header
+        game_state = self.game.state
+        if game_state.is_over:
+            if game_state.is_draw:
+                heading = "DRAW"
+            else:
+                winner = "⚫" if game_state == Player.BLACK else "⚪"
+                heading = f"{winner} WON"
+    
+            self.game_board.update_header(heading=heading)
+        else:
+            self.game_board.update_header(self.game.current_player,self.game.score)
       
     ##################### Handlers #####################
         
