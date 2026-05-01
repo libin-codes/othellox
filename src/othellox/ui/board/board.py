@@ -14,6 +14,41 @@ from textual.widgets import Button
     
 
 class OthelloBoard(Widget):
+    
+    """
+    Interactive Othello/Reversi game board widget.
+
+    This widget manages the visual board state, keyboard navigation, cell
+    interaction, move hints, and board header updates.
+    
+    ### Messages
+    - **CellHighlighted**
+    
+            Emitted when keyboard navigation changes selected move.
+            
+            `Attributes`:
+                move (Sqaure):
+                    highlighted square 
+                
+    - **CellClicked**
+
+            Emitted when a move is selected via mouse or keyboard.
+
+            `Attributes`:
+                move (Square): 
+                    Clicked square
+
+    ###  Methods
+    - `display_hints(hints)` : Show valid move hints.
+    - `clear_hints()` : Remove all move hints.
+    - `highlight(highlight_square)` : Highlight a board cell.
+    - `clear_highlight()` : Remove all cell highlights.
+    - `update_cells(squares)` : Update cell contents using game state.
+    - `update_header(current_player, score, heading)` : Update board header values.
+ 
+    """
+    
+    
     DEFAULT_CSS = """
     OthelloBoard{
         layout:vertical;
@@ -55,7 +90,7 @@ class OthelloBoard(Widget):
         yield GameGrid(self.grid_size)
         
         
-    ######## events ############
+    ######## Messages ##########
         
     class CellHighlighted(Message):
         def __init__(self,highlighted_square:Square):
@@ -68,7 +103,7 @@ class OthelloBoard(Widget):
             super().__init__()
             self.move = move
         
-    ########### API ###############
+    ####### Public Methods #######
     
     def _find_cell(self,sqaure_to_find:Square) -> Cell:
         for square, cell in self.grid.cells.items():
@@ -117,7 +152,7 @@ class OthelloBoard(Widget):
             self.header.heading = heading
         
         
-    ######## internal state ###################3
+    ######## internal state #############
         
     def watch_hints(self):
         for sqaure, cell in self.grid.cells.items():

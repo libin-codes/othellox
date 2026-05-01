@@ -4,7 +4,6 @@ from textual.widget import Widget
 from textual.reactive import reactive
 from textual.color import Color
 from ..type import CellData,Shade
-
     
     
 class Cell(Widget):
