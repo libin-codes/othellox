@@ -55,7 +55,10 @@ class OthelloBoard(Widget,can_focus=True):
         height:auto;
         padding-left:1;
         padding-right:1;
-        border-bottom:thick transparent;    
+        border-bottom:thick transparent;   
+        &:disabled{
+            opacity:1 !important;
+        }
     }
 
     """

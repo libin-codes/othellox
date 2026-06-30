@@ -47,6 +47,7 @@ class Othello(App):
         #update header
         game_state = self.game.state
         if game_state.is_over:
+            self.game_board.disabled = True
             if game_state.is_draw:
                 heading = "DRAW"
             else:

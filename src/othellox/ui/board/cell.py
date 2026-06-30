@@ -4,8 +4,8 @@ from textual.widget import Widget
 from textual.reactive import reactive
 from textual.color import Color
 from ..type import CellData,Shade
-    
-    
+from textual.widgets import Button    
+
 class Cell(Widget):
     DEFAULT_CSS = """
     Cell{
@@ -15,8 +15,8 @@ class Cell(Widget):
         content-align-vertical: middle;
         &:hover{
             opacity:80%;
-        } 
-        
+        }
+      
         &:disabled:hover {
             opacity: 100%;
         }
